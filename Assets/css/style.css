@@ -7,6 +7,7 @@
     --theme-lt-green: rgb(47, 221, 146);
     --theme-green: rgb(52, 190, 130);
     --theme-yellow: rgb(242, 240, 19);
+    --theme-yellow-hover: rgb(205, 201, 12);
 }
 
 button {
@@ -21,6 +22,10 @@ button {
     background-color: var(--theme-yellow);
 }
 
+button:hover{
+    background-color: var(--theme-yellow-hover);
+}
+
 main{
     margin: 5%;
     color: var(--theme-blue);
@@ -31,15 +36,20 @@ hr{
 }
 
 #search-button{
-    background-color: var(--theme-green);
+    background-color: var(--theme-lt-green);
     color: white;
     
+}
+
+#search-button:hover{
+    background-color: var(--theme-green);
 }
 
 #search-input{
     width: 100%;
     font-size: 25px;
     height: 40px;
+    margin: 2% 0;
     padding: 5px;
 }
 
@@ -63,6 +73,10 @@ hr{
     margin-left: 20px;
     width: 75%;
     /* border: 2px solid blue; */
+}
+
+#weather-box p{
+    margin: 8px 0;
 }
 
 #header {
