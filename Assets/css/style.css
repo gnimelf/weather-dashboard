@@ -1,3 +1,7 @@
+*{
+    font-family: 'Quicksand', sans-serif;
+}
+
 :root{
     --theme-blue: rgb(47, 135, 167);
     --theme-lt-green: rgb(47, 221, 146);
@@ -8,10 +12,35 @@
 button {
     display: block;
     width: 100%;
+    height: 100%;
+    margin: 2% 0;
+    font-size: 18px;
+    border: 2px solid var(--theme-blue);
+    border-radius: 5px;
+    color: var(--theme-blue);
+    background-color: var(--theme-yellow);
+}
+
+main{
+    margin: 5%;
+    color: var(--theme-blue);
+}
+
+hr{
+    width: 100%;
+}
+
+#search-button{
+    background-color: var(--theme-green);
+    color: white;
+    
 }
 
 #search-input{
     width: 100%;
+    font-size: 25px;
+    height: 40px;
+    padding: 5px;
 }
 
 #weather-container{
@@ -27,17 +56,21 @@ button {
     height: 100%;
     width: 25%;
 
-    border: 2px solid red;
+    /* border: 2px solid red; */
 }
 
 #weather-box{
+    margin-left: 20px;
     width: 75%;
-    border: 2px solid blue;
+    /* border: 2px solid blue; */
 }
 
 #header {
-    text-align: center;
     color: white;
+    text-align: center;
+    height: 75px;
+    padding: 15px;
     background-image: linear-gradient(to right, var(--theme-yellow), var(--theme-blue));
 }
+
 
