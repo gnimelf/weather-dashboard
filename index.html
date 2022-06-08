@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,44 @@
     <title>Weather Dashboard</title>
     <link rel="stylesheet" href="./Assets/css/style.css">
 </head>
+
 <body>
+    <header id="header">
+        <h1>Weather Dashboard</h1>
+    </header>
+    <main id="weather-container">
+        <section id="search-box">
+            <h2>search for a city:</h2>
+            <input class="search-input" for="search-button" type="text" placeholder="">
+            <button id="search-button">Search</button>
+            <hr>
+            <button>Columbus</button>
+            <button>Chicago</button>
+            <button>New York</button>
+            <button>Orlando</button>
+            <button>San Francisco</button>
+            <button>Seattle</button>
+            <button>Denver</button>
+            <button>Atlanta</button>
+        </section>
+        <section id="weather-box">
+            <section>
+                <h2>City Name and Date</h2>
+                <p>Temp:</p>
+                <p>Wind:</p>
+                <p>Humity:</p>
+                <p>UV Index: </p>
+            </section>
+            <section>
+                <h3>5-Day Forecast:</h3>
+                <section id="forecast-cards">
+
+                </section>
+            </section>
+        </section>
+    </main>
+
     <script src="./Assets/js/script.js"></script>
 </body>
+
 </html>

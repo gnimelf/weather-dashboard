@@ -1,0 +1,43 @@
+:root{
+    --theme-blue: rgb(47, 135, 167);
+    --theme-lt-green: rgb(47, 221, 146);
+    --theme-green: rgb(52, 190, 130);
+    --theme-yellow: rgb(242, 240, 19);
+}
+
+button {
+    display: block;
+    width: 100%;
+}
+
+#search-input{
+    width: 100%;
+}
+
+#weather-container{
+    display: flex;
+    justify-content:center;
+    height: 100%;
+}
+
+#search-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 25%;
+
+    border: 2px solid red;
+}
+
+#weather-box{
+    width: 75%;
+    border: 2px solid blue;
+}
+
+#header {
+    text-align: center;
+    color: white;
+    background-image: linear-gradient(to right, var(--theme-yellow), var(--theme-blue));
+}
+
