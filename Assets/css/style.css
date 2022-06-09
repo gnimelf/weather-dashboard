@@ -65,14 +65,11 @@ hr{
     justify-content: space-between;
     height: 100%;
     width: 25%;
-
-    /* border: 2px solid red; */
 }
 
 #weather-box{
     margin-left: 20px;
     width: 75%;
-    /* border: 2px solid blue; */
 }
 
 #weather-box p{
@@ -85,6 +82,23 @@ hr{
     height: 75px;
     padding: 15px;
     background-image: linear-gradient(to right, var(--theme-yellow), var(--theme-blue));
+}
+
+#five-day-forecast{
+    
+}
+
+#forecast-cards{
+    display: flex;
+}
+
+#forecast-cards .card{
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: var(--theme-green);
+    width: 20%;
+    margin: 0 5px;
 }
 
 
