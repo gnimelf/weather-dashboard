@@ -76,6 +76,12 @@ hr{
     margin: 8px 0;
 }
 
+#current-weather{
+    border: 2px solid var(--theme-blue);
+    border-radius: 10px;
+    padding: 10px;
+}
+
 #header {
     color: white;
     text-align: center;
@@ -84,12 +90,13 @@ hr{
     background-image: linear-gradient(to right, var(--theme-yellow), var(--theme-blue));
 }
 
-#five-day-forecast{
-    
-}
+/* #five-day-forecast{
+   
+} */
 
 #forecast-cards{
     display: flex;
+    justify-content: space-between;
 }
 
 #forecast-cards .card{
@@ -97,8 +104,10 @@ hr{
     border-radius: 10px;
     padding: 10px;
     background-color: var(--theme-green);
-    width: 20%;
-    margin: 0 5px;
+    width: 18%;
+    /* margin: 0 5px; */
 }
 
-
+#weather-box h3{
+    margin: 10px 0;
+}
