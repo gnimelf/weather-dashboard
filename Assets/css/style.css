@@ -38,11 +38,18 @@ hr{
 #search-button{
     background-color: var(--theme-lt-green);
     color: white;
-    
 }
 
 #search-button:hover{
     background-color: var(--theme-green);
+}
+
+#date-image{
+    display: flex;
+}
+
+#date-image img{
+    height: 36px;
 }
 
 #search-input{

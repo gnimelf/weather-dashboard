@@ -5,9 +5,11 @@ var currentTempEl=$("#current-temp");
 var currentWindEl=$("#current-wind");
 var currentHumityEl=$("#current-humity");
 var currentUVIndexEl=$("#current-uv-index");
+var time 
 
-var openWeatherAPI = "https://api.openweathermap.org/data/2.5/forecast?q="
+var openWeatherAPI = "https://api.openweathermap.org/data/2.5/forecast?"
 var city = "";
+var units = "imperial"
 var key = "6c03b15832f909d67599d2b7a3dc73ff";
 var weatherDate = {};
 
@@ -22,15 +24,34 @@ function performSearch(event){
         cityToSearch = event.target.textContent;
     }
 
-    // get current weather
+    // TODO: get current weather
+    fetch(`${openWeatherAPI}q=${cityToSearch}&appid=${key}`)
+    .then(response => {
+        if (response.status === 200){
+            return response.json();
+        } else {
+            console.log("connection failed " + response.status)
+        }
+    }).then(data => {
+        console.log(data);
+    });
 
-    // get five day forecast
+    // TODO: grab current weather
+    
+    // TODO: grab five day forecast
     fiveDayForecast();
 }
 
-buttonEl.on("click", performSearch);
+function currentWeather(data){
+    
+    var currentItem = data.list[0].weather[0]
+    var date = moment.unix(currentItem.dt).format("M/D/YYYY")
+    var currentIcon = `http://openweathermap.org/img/wn/${currentItem}@2x.png`
+    var currentTemp = data.list[0].weather[0]
+    
+}
 
-function fiveDayForecast(){
+function fiveDayForecast(data){
     // Weather card
     // <section class="card">
     // <h3>date</h3>
@@ -38,5 +59,9 @@ function fiveDayForecast(){
     // <p>Temp:</p>
     // <p>Wind:</p>
     // <p>Humity:</p>
-    //     </section>
+    // </section>
 }
+
+buttonEl.on("click", performSearch);
+
+
