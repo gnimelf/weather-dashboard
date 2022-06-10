@@ -1,9 +1,10 @@
 var buttonEl=$("button");
-var cityInput=$("#search-input");
-var cityDateIconEl=$("#city-date-icon");
+var cityInputEl=$("#search-input");
+var cityDateEl=$("#city-date");
+var currentIconEl=$("#current-icon")
 var currentTempEl=$("#current-temp");
 var currentWindEl=$("#current-wind");
-var currentHumityEl=$("#current-humity");
+var currentHumidityEl=$("#current-humidity");
 var currentUVIndexEl=$("#current-uv-index");
 var forecastCardsEl = $("#forecast-cards");
 var todaysDate = moment().format("YYYY-MM-DD");
@@ -15,17 +16,20 @@ var key = "6c03b15832f909d67599d2b7a3dc73ff";
 var weatherData = "";
 
 function performSearch(event){
+    
     var cityToSearch = "";
+    
     if (event.target.id === "search-button"){
-        cityToSearch = cityInput.val();
-        // console.log(cityToSearch);
+        cityToSearch = cityInputEl.val();
 
     } else {
-        // console.log(event.target.textContent);
         cityToSearch = event.target.textContent;
     }
 
-    // TODO: get current weather
+    //Clear input
+    cityInputEl.val("");
+
+    // Get current weather
     fetch(`${openWeatherAPI}q=${cityToSearch}&units=${units}&appid=${key}`)
     .then(response => {
         if (response.status === 200){
@@ -34,35 +38,33 @@ function performSearch(event){
             console.log("connection failed " + response.status)
         }
     }).then(data => {
+        currentWeather(data);
         fiveDayForecast(data);
     });
-
-    // TODO: grab current weather
-
-    // TODO: grab five day forecast
-    
 }
 
-function currentWeather(){
-    
-    var city = date.city.name;
-    var currentItem = data.list[0].weather[0];
+function currentWeather(data){
+
+    var currentItem = data.list[0];
     var date = moment.unix(currentItem.dt).format("M/D/YYYY");
-    // var currentIcon = `http://openweathermap.org/img/wn/${currentItem}@2x.png`;
-    var currentTemp = data.list[0].weather[0]
-    
+    cityDateEl.text(`${data.city.name} ${date}`);
+    currentIconEl.attr("src", `http://openweathermap.org/img/wn/${currentItem.weather[0].icon}@2x.png`);
+    currentTempEl.text(`Temp: ${currentItem.main.temp}°F`);
+    currentWindEl.text(`Wind: ${currentItem.wind.speed} MPH`);
+    currentHumidityEl.text(`Humidity: ${currentItem.main.humidity}%`);
+    currentUVIndexEl
 }
 
+// Grab five day forecast
 function fiveDayForecast(weatherData){
-    console.log(weatherData);
+    // console.log(weatherData);
+    forecastCardsEl.children().remove()
     var forecastData = weatherData.list;
-    var todaysDate = moment().format("YYYY-MM-DD");
     var nextDayWeather = moment().add(1,"day").format("YYYY-MM-DD");
     var thirdDayWeather = moment().add(2,"day").format("YYYY-MM-DD");
     var fourthDayWeather = moment().add(3,"day").format("YYYY-MM-DD");
     var fiveDayWeather = moment().add(4,"day").format("YYYY-MM-DD");
     var sixthDayWeather = moment().add(5,"day").format("YYYY-MM-DD");
-    var foundToday = false;
     var foundNextDay = false;
     var foundThirdDay = false;
     var foundFourthDay = false;
@@ -72,12 +74,9 @@ function fiveDayForecast(weatherData){
     for (var i=0; i<forecastData.length; i++){
         nextDay = moment().add(i,"day").format("YYYY-MM-DD");
         var item = forecastData[i];
-        var itemDate = item.dt_txt.split(" ")[0];
-        // Get the current day weather a item 0
-        if (itemDate === todaysDate && !foundToday) {
-            console.log("found today");
+        var itemDate = item.dt_txt.split(" ")[0];         
             
-        } else if(itemDate === nextDayWeather && !foundNextDay) {
+        if(itemDate === nextDayWeather && !foundNextDay) {
             console.log("found nextDay");
             foundNextDay = true;
             createCard(item, itemDate);
@@ -111,6 +110,7 @@ function createCard(item, itemDate){
     cardEl.append(dateEl);
     
     var imgEl = $("<img>");
+    imgEl.attr("class", "weather-card-icon")
     imgEl.attr("src", currentIcon);
     cardEl.append(imgEl);
     
@@ -128,6 +128,6 @@ function createCard(item, itemDate){
     forecastCardsEl.append(cardEl);
 }
 
-buttonEl.on("click", performSearch);
 
+buttonEl.on("click", performSearch);
 

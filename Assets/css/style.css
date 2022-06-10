@@ -35,6 +35,10 @@ hr{
     width: 100%;
 }
 
+.weather-card-icon{
+    width: 90%;
+}
+
 #search-button{
     background-color: var(--theme-lt-green);
     color: white;
@@ -117,4 +121,54 @@ hr{
 
 #weather-box h3{
     margin: 10px 0;
+}
+
+@media screen and (max-width: 770px){
+    #forecast-cards{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    #forecast-cards .card{
+        width: 47.5%;
+        margin: 5px;
+    }
+
+    .weather-card-icon{
+        width: 25%;
+    }
+
+}
+@media screen and (max-width: 613px){
+
+    button{
+        font-size: 14px;
+        margin: 10px 0;
+        padding: 10px 0;
+    }
+
+    #search-input{
+        font-size: 14px;
+    }
+
+    .weather-card-icon{
+        width: 50%;
+    }
+
+    #city-date{
+        width: 60%;
+    }
+
+    #date-image img{
+        width: 60px;
+        height: 60px;
+    }
+    
+    #forecast-cards .card{
+        width: 100%;
+
+        margin: 5px 0;
+    }
+
 }
