@@ -8,46 +8,13 @@ var currentHumidityEl=$("#current-humidity");
 var currentUVIndexEl=$("#current-uv-index");
 var forecastCardsEl = $("#forecast-cards");
 var todaysDate = moment().format("YYYY-MM-DD");
-
-// var openWeatherAPI = "https://api.openweathermap.org/data/2.5/forecast?"
-
-// lat={lat}&lon={lon}&exclude={part}&appid={API key}
-
+var lat = '';
+var lon = '';
 
 var weatherData = "";
 
-function performSearch(event) {
-    
-    var cityCoord = ['lat','lon'];
 
-    var openWeatherAPI = "https://api.openweathermap.org/data/2.5/onecall?"
-    var units = "imperial"
-    var key = "6c03b15832f909d67599d2b7a3dc73ff";
-    
-    if (event.target.id === "search-button"){
-        cityToSearch = cityInputEl.val();
-
-    } else {
-        cityToSearch = event.target.textContent;
-    }
-
-    //Clear input
-    cityInputEl.val("");
-
-    // Get current weather
-    fetch(`${openWeatherAPI}q=${cityToSearch}&units=${units}&appid=${key}`)
-    .then(response => {
-        if (response.status === 200){
-            return response.json();
-        } else {
-            console.log("connection failed " + response.status)
-        }
-    }).then(data => {
-        currentWeather(data);
-        fiveDayForecast(data);
-    });
-}
-
+// Add current weather values to page
 function currentWeather(data) {
 
     var currentItem = data.list[0];
@@ -105,6 +72,7 @@ function fiveDayForecast(weatherData) {
     }
 }
 
+// Creat weather cards
 function createCard(item, itemDate) {
     var currentIcon = `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`;
     var cardEl = $("<section>");
@@ -133,27 +101,56 @@ function createCard(item, itemDate) {
     forecastCardsEl.append(cardEl);
 }
 
-function getCityGeoCode() {
-    var mapQuestURL = http://www.mapquestapi.com/geocoding/v1/address
-    var location = cityInputEl.val();
-    var key = 'r1mDirYhsNqQFo4CHKpfetS7bihGswci';
-    var lat = '';
-    var lon = '';
+// Get lat lon for city name
+ function getCityGeoCode(cityName) {
 
-    fetch(`${mapQuestURL}?key=${key}&location=${location}`)
-    .then(reponse => {
-        if (reponse.status === 200){
-            return reponse.json();
+    //Clear input
+    cityInputEl.val("");
+
+    // Geocoding parameters
+    var mapQuestURL = 'https://www.mapquestapi.com/geocoding/v1/address?'
+    var mapkey = 'r1mDirYhsNqQFo4CHKpfetS7bihGswci';
+
+    // Weather parameters
+    var openWeatherAPI = "https://api.openweathermap.org/data/2.5/onecall?";
+    var units = "imperial";
+    var weatherkey = "6c03b15832f909d67599d2b7a3dc73ff";
+
+    // Get Geocoding Data
+    fetch(`${mapQuestURL}key=${mapkey}&location=${cityName}`)
+    .then(function (response) {
+        if (response.status === 200) {
+            return response.json();
         } else {
-            console.log("connection failed " + reponse.status);
+            console.log("connection failed " + response.status);
         }
-    }).then (data => {
+    }).then (function (data) {
+
+        // Return geodata
+        return data
+
+    }).then( (data) => {
+        // Get lat and lon values from data
         lat = data.results[0].locations[0].latLng.lat;
         lon = data.results[0].locations[0].latLng.lng;
-    })
-
-    return [lat, lon];
+        console.log("lat: " + lat + ", " + "lon: " + lon)
+        // Fetch weather data
+        fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
+        .then(response => {
+            if (response.status === 200){
+                return response.json();
+            } else {
+                console.log("connection failed " + response.status)
+            }
+        }).then(data => {
+            console.log(data);
+            // currentWeather(data);
+            // fiveDayForecast(data);
+        });
+    }); 
 }
+    // Get current weather
+    
 
-buttonEl.on("click", performSearch);
+buttonEl.on("click", getCityGeoCode);
 
