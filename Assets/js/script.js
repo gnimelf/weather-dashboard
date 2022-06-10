@@ -10,21 +10,21 @@ var forecastCardsEl = $("#forecast-cards");
 var todaysDate = moment().format("YYYY-MM-DD");
 var lat = '';
 var lon = '';
-
+var cityName = '';
 var weatherData = "";
 
 
 // Add current weather values to page
 function currentWeather(data) {
 
-    var currentItem = data.list[0];
+    var currentItem = data.current;
     var date = moment.unix(currentItem.dt).format("M/D/YYYY");
-    cityDateEl.text(`${data.city.name} ${date}`);
+    cityDateEl.text(`${cityName} ${date}`);
     currentIconEl.attr("src", `http://openweathermap.org/img/wn/${currentItem.weather[0].icon}@2x.png`);
-    currentTempEl.text(`Temp: ${currentItem.main.temp}°F`);
-    currentWindEl.text(`Wind: ${currentItem.wind.speed} MPH`);
-    currentHumidityEl.text(`Humidity: ${currentItem.main.humidity}%`);
-    currentUVIndexEl
+    currentTempEl.text(`Temp: ${currentItem.temp}°F`);
+    currentWindEl.text(`Wind: ${currentItem.wind_speed} MPH`);
+    currentHumidityEl.text(`Humidity: ${currentItem.humidity}%`);
+    currentUVIndexEl.text(`UV Index: ${currentItem.uvi}`)
 }
 
 // Grab five day forecast
@@ -102,7 +102,9 @@ function createCard(item, itemDate) {
 }
 
 // Get lat lon for city name
- function getCityGeoCode(cityName) {
+ function getCityGeoCode(event) {
+
+    cityName = cityInputEl.val();
 
     //Clear input
     cityInputEl.val("");
@@ -144,7 +146,7 @@ function createCard(item, itemDate) {
             }
         }).then(data => {
             console.log(data);
-            // currentWeather(data);
+            currentWeather(data);
             // fiveDayForecast(data);
         });
     }); 
