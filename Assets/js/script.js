@@ -26,7 +26,7 @@ function performSearch(event){
     }
 
     // TODO: get current weather
-    fetch(`${openWeatherAPI}q=${cityToSearch}&appid=${key}`)
+    fetch(`${openWeatherAPI}q=${cityToSearch}&units=${units}&appid=${key}`)
     .then(response => {
         if (response.status === 200){
             return response.json();
@@ -61,11 +61,13 @@ function fiveDayForecast(weatherData){
     var thirdDayWeather = moment().add(2,"day").format("YYYY-MM-DD");
     var fourthDayWeather = moment().add(3,"day").format("YYYY-MM-DD");
     var fiveDayWeather = moment().add(4,"day").format("YYYY-MM-DD");
+    var sixthDayWeather = moment().add(5,"day").format("YYYY-MM-DD");
     var foundToday = false;
     var foundNextDay = false;
     var foundThirdDay = false;
     var foundFourthDay = false;
     var foundFifthDay = false;
+    var foundSixthDay = false;
 
     for (var i=0; i<forecastData.length; i++){
         nextDay = moment().add(i,"day").format("YYYY-MM-DD");
@@ -91,6 +93,10 @@ function fiveDayForecast(weatherData){
             console.log("found fifthDay");
             foundFifthDay = true;
             createCard(item, itemDate);
+        } else if(itemDate === sixthDayWeather && !foundSixthDay) {
+            console.log("found sixthDay");
+            foundSixthDay = true;
+            createCard(item, itemDate);
         }
     }
 }
@@ -109,15 +115,15 @@ function createCard(item, itemDate){
     cardEl.append(imgEl);
     
     var tempEl = $("<p>");
-    tempEl.text(`Temp: ${item.main.temp}`);
+    tempEl.text(`Temp: ${item.main.temp}°F`);
     cardEl.append(tempEl);
     
     var windEl = $("<p>");
-    windEl.text(`Temp: ${item.wind.speed}`);
+    windEl.text(`Temp: ${item.wind.speed}MPH`);
     cardEl.append(windEl);
     
     var humidityEl = $("<p>");
-    humidityEl.text(`Humity: ${item.main.humidity}`);
+    humidityEl.text(`Humity: ${item.main.humidity}%`);
     cardEl.append(humidityEl);
     forecastCardsEl.append(cardEl);
 }
