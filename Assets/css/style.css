@@ -140,7 +140,7 @@ hr{
     }
 
 }
-@media screen and (max-width: 613px){
+@media screen and (max-width: 628px){
 
     button{
         font-size: 14px;
@@ -167,7 +167,6 @@ hr{
     
     #forecast-cards .card{
         width: 100%;
-
         margin: 5px 0;
     }
 

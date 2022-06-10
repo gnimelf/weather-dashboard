@@ -9,15 +9,20 @@ var currentUVIndexEl=$("#current-uv-index");
 var forecastCardsEl = $("#forecast-cards");
 var todaysDate = moment().format("YYYY-MM-DD");
 
-var openWeatherAPI = "https://api.openweathermap.org/data/2.5/forecast?"
-var city = "";
-var units = "imperial"
-var key = "6c03b15832f909d67599d2b7a3dc73ff";
+// var openWeatherAPI = "https://api.openweathermap.org/data/2.5/forecast?"
+
+// lat={lat}&lon={lon}&exclude={part}&appid={API key}
+
+
 var weatherData = "";
 
-function performSearch(event){
+function performSearch(event) {
     
-    var cityToSearch = "";
+    var cityCoord = ['lat','lon'];
+
+    var openWeatherAPI = "https://api.openweathermap.org/data/2.5/onecall?"
+    var units = "imperial"
+    var key = "6c03b15832f909d67599d2b7a3dc73ff";
     
     if (event.target.id === "search-button"){
         cityToSearch = cityInputEl.val();
@@ -43,7 +48,7 @@ function performSearch(event){
     });
 }
 
-function currentWeather(data){
+function currentWeather(data) {
 
     var currentItem = data.list[0];
     var date = moment.unix(currentItem.dt).format("M/D/YYYY");
@@ -56,7 +61,7 @@ function currentWeather(data){
 }
 
 // Grab five day forecast
-function fiveDayForecast(weatherData){
+function fiveDayForecast(weatherData) {
     // console.log(weatherData);
     forecastCardsEl.children().remove()
     var forecastData = weatherData.list;
@@ -100,7 +105,7 @@ function fiveDayForecast(weatherData){
     }
 }
 
-function createCard(item, itemDate){
+function createCard(item, itemDate) {
     var currentIcon = `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`;
     var cardEl = $("<section>");
     cardEl.attr("class","card");
@@ -128,6 +133,27 @@ function createCard(item, itemDate){
     forecastCardsEl.append(cardEl);
 }
 
+function getCityGeoCode() {
+    var mapQuestURL = http://www.mapquestapi.com/geocoding/v1/address
+    var location = cityInputEl.val();
+    var key = 'r1mDirYhsNqQFo4CHKpfetS7bihGswci';
+    var lat = '';
+    var lon = '';
+
+    fetch(`${mapQuestURL}?key=${key}&location=${location}`)
+    .then(reponse => {
+        if (reponse.status === 200){
+            return reponse.json();
+        } else {
+            console.log("connection failed " + reponse.status);
+        }
+    }).then (data => {
+        lat = data.results[0].locations[0].latLng.lat;
+        lon = data.results[0].locations[0].latLng.lng;
+    })
+
+    return [lat, lon];
+}
 
 buttonEl.on("click", performSearch);
 
