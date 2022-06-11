@@ -31,44 +31,13 @@ function currentWeather(data) {
 function fiveDayForecast(weatherData) {
     // console.log(weatherData);
     forecastCardsEl.children().remove()
-    var forecastData = weatherData.list;
-    var nextDayWeather = moment().add(1,"day").format("YYYY-MM-DD");
-    var thirdDayWeather = moment().add(2,"day").format("YYYY-MM-DD");
-    var fourthDayWeather = moment().add(3,"day").format("YYYY-MM-DD");
-    var fiveDayWeather = moment().add(4,"day").format("YYYY-MM-DD");
-    var sixthDayWeather = moment().add(5,"day").format("YYYY-MM-DD");
-    var foundNextDay = false;
-    var foundThirdDay = false;
-    var foundFourthDay = false;
-    var foundFifthDay = false;
-    var foundSixthDay = false;
+    var forecastData = weatherData.daily;
 
-    for (var i=0; i<forecastData.length; i++){
-        nextDay = moment().add(i,"day").format("YYYY-MM-DD");
-        var item = forecastData[i];
-        var itemDate = item.dt_txt.split(" ")[0];         
+    for (var i=0; i<forecastData.length-3; i++){
+        var item = forecastData[i];  
+        var itemDate = moment.unix(item.dt).format("MM/DD/YYYY");
             
-        if(itemDate === nextDayWeather && !foundNextDay) {
-            console.log("found nextDay");
-            foundNextDay = true;
             createCard(item, itemDate);
-        } else if(itemDate === thirdDayWeather && !foundThirdDay) {
-            console.log("found thirDay");
-            foundThirdDay = true;
-            createCard(item, itemDate);
-        } else if(itemDate === fourthDayWeather && !foundFourthDay) {
-            console.log("found fourthDay");
-            foundFourthDay = true;
-            createCard(item, itemDate);
-        } else if(itemDate === fiveDayWeather && !foundFifthDay) {
-            console.log("found fifthDay");
-            foundFifthDay = true;
-            createCard(item, itemDate);
-        } else if(itemDate === sixthDayWeather && !foundSixthDay) {
-            console.log("found sixthDay");
-            foundSixthDay = true;
-            createCard(item, itemDate);
-        }
     }
 }
 
@@ -78,26 +47,33 @@ function createCard(item, itemDate) {
     var cardEl = $("<section>");
     cardEl.attr("class","card");
 
+    // Add Date to card
     var dateEl = $("<h3>");
     dateEl.text(itemDate);
     cardEl.append(dateEl);
     
+    // Add weather image next to card
     var imgEl = $("<img>");
     imgEl.attr("class", "weather-card-icon")
     imgEl.attr("src", currentIcon);
     cardEl.append(imgEl);
     
+    // Add temp to card
     var tempEl = $("<p>");
-    tempEl.text(`Temp: ${item.main.temp}°F`);
+    tempEl.text(`Temp: ${item.temp.day}°F`);
     cardEl.append(tempEl);
     
+    // Add wind to card
     var windEl = $("<p>");
-    windEl.text(`Temp: ${item.wind.speed}MPH`);
+    windEl.text(`Temp: ${item.wind_speed}MPH`);
     cardEl.append(windEl);
     
+    // Add humidity to card
     var humidityEl = $("<p>");
-    humidityEl.text(`Humity: ${item.main.humidity}%`);
+    humidityEl.text(`Humity: ${item.humidity}%`);
     cardEl.append(humidityEl);
+
+    // Add card to document
     forecastCardsEl.append(cardEl);
 }
 
@@ -119,7 +95,7 @@ function createCard(item, itemDate) {
     var weatherkey = "6c03b15832f909d67599d2b7a3dc73ff";
 
     // Get Geocoding Data
-    fetch(`${mapQuestURL}key=${mapkey}&location=${cityName}`)
+    fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
     .then(function (response) {
         if (response.status === 200) {
             return response.json();
@@ -132,10 +108,11 @@ function createCard(item, itemDate) {
         return data
 
     }).then( (data) => {
+        
         // Get lat and lon values from data
         lat = data.results[0].locations[0].latLng.lat;
         lon = data.results[0].locations[0].latLng.lng;
-        console.log("lat: " + lat + ", " + "lon: " + lon)
+
         // Fetch weather data
         fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
         .then(response => {
@@ -147,7 +124,7 @@ function createCard(item, itemDate) {
         }).then(data => {
             console.log(data);
             currentWeather(data);
-            // fiveDayForecast(data);
+            fiveDayForecast(data);
         });
     }); 
 }
