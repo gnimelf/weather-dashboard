@@ -12,7 +12,8 @@ var lat = '';
 var lon = '';
 var cityName = '';
 var weatherData = "";
-
+var getHistory = localStorage.getItem("cityList");
+var setHistory = '';
 
 // Add current weather values to page
 function currentWeather(data) {
@@ -29,15 +30,14 @@ function currentWeather(data) {
 
 // Grab five day forecast
 function fiveDayForecast(weatherData) {
-    // console.log(weatherData);
     forecastCardsEl.children().remove()
     var forecastData = weatherData.daily;
 
-    for (var i=0; i<forecastData.length-3; i++){
+    for (var i=1; i<=forecastData.length-3; i++){
         var item = forecastData[i];  
         var itemDate = moment.unix(item.dt).format("MM/DD/YYYY");
             
-            createCard(item, itemDate);
+         createCard(item, itemDate);
     }
 }
 
@@ -81,6 +81,7 @@ function createCard(item, itemDate) {
  function getCityGeoCode(event) {
 
     cityName = cityInputEl.val();
+    saveToStorate();
 
     //Clear input
     cityInputEl.val("");
@@ -95,41 +96,61 @@ function createCard(item, itemDate) {
     var weatherkey = "6c03b15832f909d67599d2b7a3dc73ff";
 
     // Get Geocoding Data
-    fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
-    .then(function (response) {
-        if (response.status === 200) {
-            return response.json();
-        } else {
-            console.log("connection failed " + response.status);
-        }
-    }).then (function (data) {
+    // fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
+    // .then(function (response) {
+    //     if (response.status === 200) {
+    //         return response.json();
+    //     } else {
+    //         console.log("connection failed " + response.status);
+    //     }
+    // }).then (function (data) {
 
-        // Return geodata
-        return data
+    //     // Return geodata
+    //     return data
 
-    }).then( (data) => {
+    // }).then( (data) => {
         
-        // Get lat and lon values from data
-        lat = data.results[0].locations[0].latLng.lat;
-        lon = data.results[0].locations[0].latLng.lng;
+    //     // Get lat and lon values from data
+    //     lat = data.results[0].locations[0].latLng.lat;
+    //     lon = data.results[0].locations[0].latLng.lng;
 
-        // Fetch weather data
-        fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
-        .then(response => {
-            if (response.status === 200){
-                return response.json();
-            } else {
-                console.log("connection failed " + response.status)
-            }
-        }).then(data => {
-            console.log(data);
-            currentWeather(data);
-            fiveDayForecast(data);
-        });
-    }); 
+    //     // Fetch weather data
+    //     fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
+    //     .then(response => {
+    //         if (response.status === 200){
+    //             return response.json();
+    //         } else {
+    //             console.log("connection failed " + response.status)
+    //         }
+    //     }).then(data => {
+    //         console.log(data);
+    //         currentWeather(data);
+    //         fiveDayForecast(data);
+    //     });
+    // }); 
 }
-    // Get current weather
+
+function saveToStorate(){
+    var match = false;
+
+    if (localStorage.length === 0){
+        console.log(cityName);
+        setHistory = [cityName];
+    } else {
+        setHistory.push(cityName);
+    }
+    saveString = JSON.stringify(setHistory);
+    localStorage.setItem("cityList", saveString);
+}
     
+function loadFromStorate(){
+    getHistory = localStorage.getItem("cityList");
+    setHistory = JSON.parse(getHistory);
+    
+    // if (searchHistory)
+}
 
+
+
+loadFromStorate();
 buttonEl.on("click", getCityGeoCode);
-
