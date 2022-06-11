@@ -7,6 +7,7 @@ var currentWindEl=$("#current-wind");
 var currentHumidityEl=$("#current-humidity");
 var currentUVIndexEl=$("#current-uv-index");
 var forecastCardsEl = $("#forecast-cards");
+var searchHistoryEl = $("#search-history")
 var todaysDate = moment().format("YYYY-MM-DD");
 var lat = '';
 var lon = '';
@@ -14,6 +15,7 @@ var cityName = '';
 var weatherData = "";
 var getHistory = localStorage.getItem("cityList");
 var setHistory = '';
+var buttonEl=$("button");
 
 // Add current weather values to page
 function currentWeather(data) {
@@ -80,12 +82,6 @@ function createCard(item, itemDate) {
 // Get lat lon for city name
  function getCityGeoCode(event) {
 
-    cityName = cityInputEl.val();
-    saveToStorate();
-
-    //Clear input
-    cityInputEl.val("");
-
     // Geocoding parameters
     var mapQuestURL = 'https://www.mapquestapi.com/geocoding/v1/address?'
     var mapkey = 'r1mDirYhsNqQFo4CHKpfetS7bihGswci';
@@ -95,42 +91,55 @@ function createCard(item, itemDate) {
     var units = "imperial";
     var weatherkey = "6c03b15832f909d67599d2b7a3dc73ff";
 
-    // Get Geocoding Data
-    // fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
-    // .then(function (response) {
-    //     if (response.status === 200) {
-    //         return response.json();
-    //     } else {
-    //         console.log("connection failed " + response.status);
-    //     }
-    // }).then (function (data) {
-
-    //     // Return geodata
-    //     return data
-
-    // }).then( (data) => {
+    if (event.target.id === "search-button"){
+        console.log(event.target)
+        cityName = cityInputEl.val();
         
-    //     // Get lat and lon values from data
-    //     lat = data.results[0].locations[0].latLng.lat;
-    //     lon = data.results[0].locations[0].latLng.lng;
+        saveToStorage();
+        
+        //Clear input
+        cityInputEl.val("");
+    } else {
+        console.log(event)
+        cityName = event.target.textContent;
+    }
 
-    //     // Fetch weather data
-    //     fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
-    //     .then(response => {
-    //         if (response.status === 200){
-    //             return response.json();
-    //         } else {
-    //             console.log("connection failed " + response.status)
-    //         }
-    //     }).then(data => {
-    //         console.log(data);
-    //         currentWeather(data);
-    //         fiveDayForecast(data);
-    //     });
-    // }); 
+    // Get Geocoding Data
+    fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
+    .then(function (response) {
+        if (response.status === 200) {
+            return response.json();
+        } else {
+            console.log("connection failed " + response.status);
+        }
+    }).then (function (data) {
+
+        // Return geodata
+        return data
+
+    }).then( (data) => {
+        
+        // Get lat and lon values from data
+        lat = data.results[0].locations[0].latLng.lat;
+        lon = data.results[0].locations[0].latLng.lng;
+
+        // Fetch weather data
+        fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
+        .then(response => {
+            if (response.status === 200){
+                return response.json();
+            } else {
+                console.log("connection failed " + response.status)
+            }
+        }).then(data => {
+            console.log(data);
+            currentWeather(data);
+            fiveDayForecast(data);
+        });
+    }); 
 }
 
-function saveToStorate(){
+function saveToStorage(){
     var match = false;
 
     if (localStorage.length === 0){
@@ -141,16 +150,30 @@ function saveToStorate(){
     }
     saveString = JSON.stringify(setHistory);
     localStorage.setItem("cityList", saveString);
+    createHistoryBtn(cityName);
 }
     
-function loadFromStorate(){
+function loadFromStorage(){
     getHistory = localStorage.getItem("cityList");
     setHistory = JSON.parse(getHistory);
     
-    // if (searchHistory)
+    if (setHistory === null){
+
+    } else {
+        setHistory.forEach(element => {
+            createHistoryBtn(element)
+        });
+    }
 }
 
+function createHistoryBtn(name){
+    var btnEl = $("<button>")
+    btnEl.attr("class", `${name}-btn`);
+    btnEl.text(`${name}`)
+    searchHistoryEl.append(btnEl);
+    btnEl.on("click", getCityGeoCode);
+    
+}
+loadFromStorage();
 
-
-loadFromStorate();
 buttonEl.on("click", getCityGeoCode);
