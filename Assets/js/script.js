@@ -142,7 +142,7 @@ function createCard(item, itemDate) {
 function saveToStorage(){
     var match = false;
 
-    if (localStorage.length === 0){
+    if (getHistory === null){
         console.log(cityName);
         setHistory = [cityName];
     } else {
