@@ -28,6 +28,17 @@ function currentWeather(data) {
     currentWindEl.text(`Wind: ${currentItem.wind_speed} MPH`);
     currentHumidityEl.text(`Humidity: ${currentItem.humidity}%`);
     currentUVIndexEl.text(`UV Index: ${currentItem.uvi}`)
+    if (currentItem.uvi < 4) {
+        currentUVIndexEl.addClass("uvi-good");
+    } else if (currentItem.uvi < 6){
+        currentUVIndexEl.addClass("uvi-mod");
+    } else if (currentItem.uvi < 8){
+        currentUVIndexEl.addClass("uvi-high");
+    } else if (currentItem.uvi < 10){
+        currentUVIndexEl.addClass("uvi-very-high");
+    } else {
+        currentUVIndexEl.addClass("uvi-extreme");
+    }
 }
 
 // Grab five day forecast
@@ -81,6 +92,7 @@ function createCard(item, itemDate) {
 
 // Get lat lon for city name
  function getCityGeoCode(event) {
+    currentUVIndexEl.removeClass();
 
     // Geocoding parameters
     var mapQuestURL = 'https://www.mapquestapi.com/geocoding/v1/address?'
