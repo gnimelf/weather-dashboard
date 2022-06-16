@@ -1,11 +1,11 @@
-var buttonEl=$("button");
-var cityInputEl=$("#search-input");
-var cityDateEl=$("#city-date");
-var currentIconEl=$("#current-icon")
-var currentTempEl=$("#current-temp");
-var currentWindEl=$("#current-wind");
-var currentHumidityEl=$("#current-humidity");
-var currentUVIndexEl=$("#current-uv-index");
+var buttonEl = $("button");
+var cityInputEl = $("#search-input");
+var cityDateEl = $("#city-date");
+var currentIconEl = $("#current-icon")
+var currentTempEl = $("#current-temp");
+var currentWindEl = $("#current-wind");
+var currentHumidityEl = $("#current-humidity");
+var currentUVIndexEl = $("#current-uv-index");
 var forecastCardsEl = $("#forecast-cards");
 var searchHistoryEl = $("#search-history")
 var todaysDate = moment().format("YYYY-MM-DD");
@@ -15,7 +15,7 @@ var cityName = '';
 var weatherData = "";
 var getHistory = localStorage.getItem("cityList");
 var setHistory = '';
-var buttonEl=$("button");
+var buttonEl = $("button");
 
 // Add current weather values to page
 function currentWeather(data) {
@@ -30,11 +30,11 @@ function currentWeather(data) {
     currentUVIndexEl.text(`UV Index: ${currentItem.uvi}`)
     if (currentItem.uvi < 4) {
         currentUVIndexEl.addClass("uvi-good");
-    } else if (currentItem.uvi < 6){
+    } else if (currentItem.uvi < 6) {
         currentUVIndexEl.addClass("uvi-mod");
-    } else if (currentItem.uvi < 8){
+    } else if (currentItem.uvi < 8) {
         currentUVIndexEl.addClass("uvi-high");
-    } else if (currentItem.uvi < 10){
+    } else if (currentItem.uvi < 10) {
         currentUVIndexEl.addClass("uvi-very-high");
     } else {
         currentUVIndexEl.addClass("uvi-extreme");
@@ -46,11 +46,11 @@ function fiveDayForecast(weatherData) {
     forecastCardsEl.children().remove()
     var forecastData = weatherData.daily;
 
-    for (var i=1; i<=forecastData.length-3; i++){
-        var item = forecastData[i];  
+    for (var i = 1; i <= forecastData.length - 3; i++) {
+        var item = forecastData[i];
         var itemDate = moment.unix(item.dt).format("MM/DD/YYYY");
-            
-         createCard(item, itemDate);
+
+        createCard(item, itemDate);
     }
 }
 
@@ -58,29 +58,29 @@ function fiveDayForecast(weatherData) {
 function createCard(item, itemDate) {
     var currentIcon = `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`;
     var cardEl = $("<section>");
-    cardEl.attr("class","card");
+    cardEl.attr("class", "card");
 
     // Add Date to card
     var dateEl = $("<h3>");
     dateEl.text(itemDate);
     cardEl.append(dateEl);
-    
+
     // Add weather image next to card
     var imgEl = $("<img>");
     imgEl.attr("class", "weather-card-icon")
     imgEl.attr("src", currentIcon);
     cardEl.append(imgEl);
-    
+
     // Add temp to card
     var tempEl = $("<p>");
     tempEl.text(`Temp: ${item.temp.day}°F`);
     cardEl.append(tempEl);
-    
+
     // Add wind to card
     var windEl = $("<p>");
     windEl.text(`Temp: ${item.wind_speed}MPH`);
     cardEl.append(windEl);
-    
+
     // Add humidity to card
     var humidityEl = $("<p>");
     humidityEl.text(`Humity: ${item.humidity}%`);
@@ -91,9 +91,8 @@ function createCard(item, itemDate) {
 }
 
 // Get lat lon for city name
- function getCityGeoCode(event) {
-    currentUVIndexEl.removeClass();
-
+function getCityGeoCode(event) {
+    
     // Geocoding parameters
     var mapQuestURL = 'https://www.mapquestapi.com/geocoding/v1/address?'
     var mapkey = 'r1mDirYhsNqQFo4CHKpfetS7bihGswci';
@@ -102,59 +101,62 @@ function createCard(item, itemDate) {
     var openWeatherAPI = "https://api.openweathermap.org/data/2.5/onecall?";
     var units = "imperial";
     var weatherkey = "6c03b15832f909d67599d2b7a3dc73ff";
+    if (cityInputEl.val() !== "" || event.target.textContent !== "Search") {
+        currentUVIndexEl.removeClass();
+        if (event.target.id === "search-button") {
+            console.log(event.target)
+            cityName = cityInputEl.val();
 
-    if (event.target.id === "search-button"){
-        console.log(event.target)
-        cityName = cityInputEl.val();
-        
-        saveToStorage();
-        
-        //Clear input
-        cityInputEl.val("");
-    } else {
-        console.log(event)
-        cityName = event.target.textContent;
+            saveToStorage();
+
+            //Clear input
+            cityInputEl.val("");
+        } else {
+            console.log(event)
+            cityName = event.target.textContent;
+        }
+
+        // Get Geocoding Data
+        fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
+            .then(function (response) {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    console.log("connection failed " + response.status);
+                }
+            }).then(function (data) {
+
+                // Return geodata
+                return data
+
+            }).then((data) => {
+
+                // Get lat and lon values from data
+                lat = data.results[0].locations[0].latLng.lat;
+                lon = data.results[0].locations[0].latLng.lng;
+
+                // Fetch weather data
+                fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json();
+                        } else {
+                            console.log("connection failed " + response.status)
+                        }
+                    }).then(data => {
+                        console.log(data);
+                        currentWeather(data);
+                        fiveDayForecast(data);
+                    });
+            });
     }
 
-    // Get Geocoding Data
-    fetch(`${mapQuestURL}key=${mapkey}&exclude=hourly&location=${cityName}`)
-    .then(function (response) {
-        if (response.status === 200) {
-            return response.json();
-        } else {
-            console.log("connection failed " + response.status);
-        }
-    }).then (function (data) {
-
-        // Return geodata
-        return data
-
-    }).then( (data) => {
-        
-        // Get lat and lon values from data
-        lat = data.results[0].locations[0].latLng.lat;
-        lon = data.results[0].locations[0].latLng.lng;
-
-        // Fetch weather data
-        fetch(`${openWeatherAPI}lat=${lat}&lon=${lon}&units=${units}&appid=${weatherkey}`)
-        .then(response => {
-            if (response.status === 200){
-                return response.json();
-            } else {
-                console.log("connection failed " + response.status)
-            }
-        }).then(data => {
-            console.log(data);
-            currentWeather(data);
-            fiveDayForecast(data);
-        });
-    }); 
 }
 
-function saveToStorage(){
+function saveToStorage() {
     var match = false;
 
-    if (getHistory === null){
+    if (getHistory === null) {
         console.log(cityName);
         setHistory = [cityName];
     } else {
@@ -164,12 +166,12 @@ function saveToStorage(){
     localStorage.setItem("cityList", saveString);
     createHistoryBtn(cityName);
 }
-    
-function loadFromStorage(){
+
+function loadFromStorage() {
     getHistory = localStorage.getItem("cityList");
     setHistory = JSON.parse(getHistory);
-    
-    if (setHistory === null){
+
+    if (setHistory === null) {
 
     } else {
         setHistory.forEach(element => {
@@ -178,13 +180,13 @@ function loadFromStorage(){
     }
 }
 
-function createHistoryBtn(name){
+function createHistoryBtn(name) {
     var btnEl = $("<button>")
     btnEl.attr("class", `${name}-btn`);
     btnEl.text(`${name}`)
     searchHistoryEl.append(btnEl);
     btnEl.on("click", getCityGeoCode);
-    
+
 }
 loadFromStorage();
 
